@@ -69,12 +69,15 @@ class TridaController extends AbstractController
             throw $this->createNotFoundException('Třída nenalezena.');
         }
 
+        $zaci = $this->zakRepository->findByTridaId($trida->getId());
+        $veci = $this->vecRepository->findForTridaWithActiveLoan($trida->getId());
+
         $this->denyAccessUnlessGranted(TridaVoter::MANAGE, $trida);
 
         return $this->render('trida/detail.html.twig', [
             'trida' => $trida,
-            'zaci' => $this->zakRepository->findByTridaId($trida->getId()),
-            'veci' => $this->vecRepository->findForTridaWithActiveLoan($trida->getId()),
+            'zaci' => $zaci,
+            'veci' => $veci,
             'zapujceni' => $this->zapujceniRepository->findForTridaId($trida->getId()),
         ]);
     }
