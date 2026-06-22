@@ -83,9 +83,9 @@ class TridaController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/smazat', name: 'app_trida_delete', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route('/{id}/smazat', name: 'app_trida_delete', requirements: ['id' => '\d+'], methods: ['POST'])]
     #[IsGranted('ROLE_UCITEL')]
-    public function delete(int $id): Response
+    public function delete(int $id, Request $request): Response
     {
         $trida = $this->tridaRepository->findById($id);
         if (!$trida) {
@@ -93,6 +93,13 @@ class TridaController extends AbstractController
         }
 
         $this->denyAccessUnlessGranted(TridaVoter::MANAGE, $trida);
+
+        $potvrzeni = trim((string) $request->request->get('potvrzeni', ''));
+        if ($potvrzeni !== $trida->getNazev()) {
+            $this->addFlash('error', 'Název třídy se neshoduje. Třída nebyla smazána.');
+
+            return $this->redirectToRoute('app_trida_detail', ['id' => $id]);
+        }
 
         $this->em->remove($trida);
         $this->em->flush();

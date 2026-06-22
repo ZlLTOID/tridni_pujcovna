@@ -11,9 +11,7 @@
         <a href="{{ path('app_vec_create', {tridaId: trida.id}) }}" class="btn btn-small">+ Věc</a>
         <a href="{{ path('app_zapujceni_create', {tridaId: trida.id}) }}" class="btn btn-small btn-primary">Zapůjčit</a>
         {% if is_granted('ROLE_UCITEL') %}
-        <a href="{{ path('app_trida_delete', {id: trida.id}) }}"
-           class="btn btn-small btn-danger"
-           onclick="return confirm('Opravdu smazat celou třídu včetně žáků a věcí?')">Smazat třídu</a>
+        <button type="button" class="btn btn-small btn-danger" id="trida-delete-open">Smazat třídu</button>
         {% endif %}
     </div>
 </div>
@@ -144,4 +142,82 @@
 </section>
 
 <p><a href="{{ path('app_dashboard') }}">← Zpět na přehled</a></p>
+
+{% if is_granted('ROLE_UCITEL') %}
+<div class="modal" id="trida-delete-modal" hidden>
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-dialog" role="dialog" aria-labelledby="trida-delete-title" aria-modal="true">
+        <h2 id="trida-delete-title">Smazat třídu?</h2>
+        <p class="muted">Tato akce je nevratná. Smaže se celá třída včetně žáků, věcí a historie zapůjčení.</p>
+        <p>Pro potvrzení napiš přesně název třídy: <strong>{{ trida.nazev }}</strong></p>
+        <form method="post" action="{{ path('app_trida_delete', {id: trida.id}) }}" id="trida-delete-form" class="form">
+            <label>Název třídy
+                <input type="text" name="potvrzeni" id="trida-delete-input" autocomplete="off" spellcheck="false" required>
+            </label>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger" id="trida-delete-submit" disabled>Trvale smazat třídu</button>
+                <button type="button" class="btn btn-outline" data-modal-close>Zrušit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    const expected = {{ trida.nazev|json_encode|raw }};
+    const modal = document.getElementById('trida-delete-modal');
+    const openBtn = document.getElementById('trida-delete-open');
+    const input = document.getElementById('trida-delete-input');
+    const submit = document.getElementById('trida-delete-submit');
+    const form = document.getElementById('trida-delete-form');
+
+    if (!modal || !openBtn || !input || !submit || !form) {
+        return;
+    }
+
+    function matches() {
+        return input.value.trim() === expected;
+    }
+
+    function updateSubmit() {
+        submit.disabled = !matches();
+    }
+
+    function openModal() {
+        modal.hidden = false;
+        document.body.classList.add('modal-open');
+        input.value = '';
+        updateSubmit();
+        input.focus();
+    }
+
+    function closeModal() {
+        modal.hidden = true;
+        document.body.classList.remove('modal-open');
+        input.value = '';
+        updateSubmit();
+    }
+
+    openBtn.addEventListener('click', openModal);
+    input.addEventListener('input', updateSubmit);
+
+    modal.querySelectorAll('[data-modal-close]').forEach(function (el) {
+        el.addEventListener('click', closeModal);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (!modal.hidden && e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        if (!matches()) {
+            e.preventDefault();
+            updateSubmit();
+        }
+    });
+})();
+</script>
+{% endif %}
 {% endblock %}
