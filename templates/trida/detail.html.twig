@@ -24,14 +24,16 @@
     <p class="muted">Zatím žádní žáci. <a href="{{ path('app_zak_create', {tridaId: trida.id}) }}">Přidej prvního</a></p>
     {% else %}
     <table class="table">
-        <thead><tr><th>Jméno</th><th>Příjmení</th><th></th></tr></thead>
+        <thead><tr><th>Jméno</th><th>Příjmení</th><th class="actions-col"></th></tr></thead>
         <tbody>
         {% for z in zaci %}
         <tr>
             <td>{{ z.jmeno }}</td>
             <td>{{ z.prijmeni }}</td>
             <td class="actions">
+                <a href="{{ path('app_zak_edit', {id: z.id}) }}" class="btn btn-small btn-outline-primary">Upravit</a>
                 <a href="{{ path('app_zak_delete', {id: z.id}) }}"
+                   class="btn btn-small btn-outline-danger"
                    onclick="return confirm('Smazat žáka?')">Smazat</a>
             </td>
         </tr>
@@ -61,11 +63,14 @@
                     {{ v.zapujcena ? 'Půjčeno' : 'Volné' }}
                 </span>
             </div>
-            {% if not v.zapujcena %}
-            <a href="{{ path('app_vec_delete', {id: v.id}) }}"
-               class="vec-delete"
-               onclick="return confirm('Smazat věc?')">Smazat</a>
-            {% endif %}
+            <div class="vec-actions">
+                <a href="{{ path('app_vec_edit', {id: v.id}) }}" class="btn btn-small btn-outline-primary">Upravit</a>
+                {% if not v.zapujcena %}
+                <a href="{{ path('app_vec_delete', {id: v.id}) }}"
+                   class="btn btn-small btn-outline-danger"
+                   onclick="return confirm('Smazat věc?')">Smazat</a>
+                {% endif %}
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -73,9 +78,45 @@
 </section>
 
 <section class="section">
+    <h2>Zapůjčení</h2>
+    {% if aktivniZapujceni is empty %}
+    <p class="muted">Žádné aktivní zapůjčení.
+        <a href="{{ path('app_zapujceni_create', {tridaId: trida.id}) }}">Zapůjčit věc</a>
+    </p>
+    {% else %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Věc</th>
+            <th>Žák</th>
+            <th>Zapůjčeno</th>
+            <th>Poznámka</th>
+            <th class="actions-col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for zp in aktivniZapujceni %}
+        <tr class="row-active">
+            <td>{{ zp.vecNazev }}</td>
+            <td>{{ zp.zakCeleJmeno }}</td>
+            <td>{{ zp.datumZapujceni|date('d.m.Y H:i') }}</td>
+            <td>{{ zp.poznamka ?: '—' }}</td>
+            <td class="actions">
+                <a href="{{ path('app_zapujceni_return', {id: zp.id}) }}"
+                   class="btn btn-small btn-outline-success"
+                   onclick="return confirm('Označit jako vrácené?')">Vrátit</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</section>
+
+<section class="section">
     <h2>Historie zapůjčení</h2>
-    {% if zapujceni is empty %}
-    <p class="muted">Zatím žádné zapůjčení.</p>
+    {% if historieZapujceni is empty %}
+    <p class="muted">Zatím žádná vrácená zapůjčení.</p>
     {% else %}
     <table class="table">
         <thead>
@@ -85,26 +126,16 @@
             <th>Zapůjčeno</th>
             <th>Vráceno</th>
             <th>Poznámka</th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
-        {% for zp in zapujceni %}
-        <tr class="{{ zp.aktivni ? 'row-active' : '' }}">
+        {% for zp in historieZapujceni %}
+        <tr>
             <td>{{ zp.vecNazev }}</td>
             <td>{{ zp.zakCeleJmeno }}</td>
             <td>{{ zp.datumZapujceni|date('d.m.Y H:i') }}</td>
             <td>{{ zp.datumVraceni ? zp.datumVraceni|date('d.m.Y H:i') : '—' }}</td>
             <td>{{ zp.poznamka ?: '—' }}</td>
-            <td class="actions">
-                {% if zp.aktivni %}
-                <a href="{{ path('app_zapujceni_return', {id: zp.id}) }}"
-                   class="btn btn-small btn-primary"
-                   onclick="return confirm('Označit jako vrácené?')">Vrátit</a>
-                {% else %}
-                <span class="muted">Ukončeno</span>
-                {% endif %}
-            </td>
         </tr>
         {% endfor %}
         </tbody>

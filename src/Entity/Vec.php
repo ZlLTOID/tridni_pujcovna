@@ -67,9 +67,14 @@ class Vec
         return $this;
     }
 
-    public function jeZapujcena(): bool
+    public function isZapujcena(): bool
     {
         return $this->zapujcena;
+    }
+
+    public function jeZapujcena(): bool
+    {
+        return $this->isZapujcena();
     }
 
     public function setZapujcena(bool $zapujcena): self

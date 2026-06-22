@@ -63,6 +63,48 @@ class ZakController extends AbstractController
         return $this->redirectToRoute('app_trida_detail', ['id' => $tridaId]);
     }
 
+    #[Route('/zak/{id}/upravit', name: 'app_zak_edit', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function edit(int $id): Response
+    {
+        $zak = $this->zakRepository->findById($id);
+        if (!$zak) {
+            throw $this->createNotFoundException('Žák nenalezen.');
+        }
+
+        $this->denyAccessUnlessGranted(TridaVoter::MANAGE, $zak->getTrida());
+
+        return $this->render('zak/edit.html.twig', ['zak' => $zak]);
+    }
+
+    #[Route('/zak/{id}/upravit', name: 'app_zak_update', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function update(int $id, Request $request): Response
+    {
+        $zak = $this->zakRepository->findById($id);
+        if (!$zak) {
+            throw $this->createNotFoundException('Žák nenalezen.');
+        }
+
+        $trida = $zak->getTrida();
+        $this->denyAccessUnlessGranted(TridaVoter::MANAGE, $trida);
+
+        $jmeno = trim((string) $request->request->get('jmeno', ''));
+        $prijmeni = trim((string) $request->request->get('prijmeni', ''));
+
+        if ($jmeno === '' || $prijmeni === '') {
+            $this->addFlash('error', 'Vyplň jméno i příjmení žáka.');
+
+            return $this->redirectToRoute('app_zak_edit', ['id' => $id]);
+        }
+
+        $zak->setJmeno($jmeno);
+        $zak->setPrijmeni($prijmeni);
+        $this->em->flush();
+
+        $this->addFlash('success', 'Údaje žáka byly uloženy.');
+
+        return $this->redirectToRoute('app_trida_detail', ['id' => $trida->getId()]);
+    }
+
     #[Route('/zak/{id}/smazat', name: 'app_zak_delete', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function delete(int $id): Response
     {

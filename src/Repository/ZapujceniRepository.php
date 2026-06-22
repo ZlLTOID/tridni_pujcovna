@@ -29,6 +29,38 @@ class ZapujceniRepository extends ServiceEntityRepository
     }
 
     /** @return Zapujceni[] */
+    public function findActiveForTridaId(int $tridaId): array
+    {
+        $sql = <<<'SQL'
+            SELECT zp.*
+            FROM zapujceni zp
+            INNER JOIN vec v ON v.id = zp.vec_id
+            WHERE v.trida_id = :tridaId
+              AND zp.aktivni = 1
+            ORDER BY zp.datum_zapujceni DESC
+            SQL;
+
+        /** @var Zapujceni[] */
+        return $this->fetchAll($sql, Zapujceni::class, 'zp', ['tridaId' => $tridaId]);
+    }
+
+    /** @return Zapujceni[] */
+    public function findHistoryForTridaId(int $tridaId): array
+    {
+        $sql = <<<'SQL'
+            SELECT zp.*
+            FROM zapujceni zp
+            INNER JOIN vec v ON v.id = zp.vec_id
+            WHERE v.trida_id = :tridaId
+              AND zp.aktivni = 0
+            ORDER BY zp.datum_vraceni DESC, zp.datum_zapujceni DESC
+            SQL;
+
+        /** @var Zapujceni[] */
+        return $this->fetchAll($sql, Zapujceni::class, 'zp', ['tridaId' => $tridaId]);
+    }
+
+    /** @return Zapujceni[] */
     public function findForTridaId(int $tridaId): array
     {
         $sql = <<<'SQL'

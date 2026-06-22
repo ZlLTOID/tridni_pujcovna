@@ -78,7 +78,8 @@ class TridaController extends AbstractController
             'trida' => $trida,
             'zaci' => $zaci,
             'veci' => $veci,
-            'zapujceni' => $this->zapujceniRepository->findForTridaId($trida->getId()),
+            'aktivniZapujceni' => $this->zapujceniRepository->findActiveForTridaId($trida->getId()),
+            'historieZapujceni' => $this->zapujceniRepository->findHistoryForTridaId($trida->getId()),
         ]);
     }
 

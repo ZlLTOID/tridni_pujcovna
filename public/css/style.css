@@ -88,23 +88,123 @@ h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
 .muted { color: var(--muted); margin-bottom: 1rem; }
 
 .btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.55rem 1rem;
     border-radius: 8px;
     font-weight: 700;
     text-decoration: none;
-    border: none;
+    border: 2px solid transparent;
     cursor: pointer;
     font-size: 0.95rem;
+    line-height: 1.2;
     background: var(--border);
     color: var(--text);
+    transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-dark); }
-.btn-danger { background: var(--danger); color: white; }
-.btn-outline { background: transparent; border: 2px solid var(--border); }
-.btn-small { padding: 0.35rem 0.7rem; font-size: 0.85rem; }
+.btn:hover { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+
+.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); color: #fff; }
+
+.btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+.btn-danger:hover { background: #dc2626; border-color: #dc2626; color: #fff; }
+
+.btn-outline { background: var(--card); border-color: var(--border); color: var(--text); }
+.btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+
+.btn-outline-primary {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: var(--primary-dark);
+}
+
+.btn-outline-primary:hover {
+    background: #dbeafe;
+    border-color: var(--primary);
+    color: #1d4ed8;
+}
+
+.btn-outline-danger {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+}
+
+.btn-outline-danger:hover {
+    background: #fee2e2;
+    border-color: var(--danger);
+    color: #991b1b;
+}
+
+.btn-outline-success {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #15803d;
+}
+
+.btn-outline-success:hover {
+    background: #dcfce7;
+    border-color: #22c55e;
+    color: #166534;
+}
+
+.btn-small { padding: 0.35rem 0.65rem; font-size: 0.8rem; border-radius: 7px; }
+
+/* Odkazy jako tlačítka — prohlížeč jinak přebíjí barvu textu */
+a.btn,
+a.btn:hover,
+a.btn:focus,
+a.btn:visited {
+    text-decoration: none;
+}
+
+a.btn-primary,
+a.btn-primary:hover,
+a.btn-primary:focus,
+a.btn-primary:visited {
+    color: #fff;
+    background-color: var(--primary);
+}
+
+a.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+a.btn-danger,
+a.btn-danger:hover,
+a.btn-danger:focus,
+a.btn-danger:visited {
+    color: #fff;
+    background-color: var(--danger);
+}
+
+a.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+a.btn-outline-primary,
+a.btn-outline-primary:hover,
+a.btn-outline-primary:focus,
+a.btn-outline-primary:visited {
+    color: var(--primary-dark);
+}
+
+a.btn-outline-danger,
+a.btn-outline-danger:hover,
+a.btn-outline-danger:focus,
+a.btn-outline-danger:visited {
+    color: #b91c1c;
+}
+
+a.btn-outline-success,
+a.btn-outline-success:hover,
+a.btn-outline-success:focus,
+a.btn-outline-success:visited {
+    color: #15803d;
+}
 
 .flash {
     padding: 0.75rem 1rem;
@@ -223,7 +323,24 @@ h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
 
 .table th { color: var(--muted); font-size: 0.85rem; }
 .row-active { background: #f0fdf4; }
-.actions a { color: var(--primary); font-weight: 600; text-decoration: none; }
+
+.table th.actions-col,
+.table td.actions {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.table .actions {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.table .actions .btn {
+    flex-shrink: 0;
+}
 
 .badge {
     display: inline-block;
@@ -251,10 +368,11 @@ h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
     background: white;
 }
 
-.vec-borrowed {
-    opacity: 0.45;
-    filter: grayscale(0.6);
-    cursor: not-allowed;
+.vec-borrowed .vec-photo,
+.vec-borrowed .vec-photo-placeholder,
+.vec-borrowed .vec-info {
+    opacity: 0.55;
+    filter: grayscale(0.55);
 }
 
 .vec-photo {
@@ -281,14 +399,17 @@ h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
     font-size: 0.85rem;
 }
 
-.vec-delete {
-    display: block;
-    text-align: center;
-    padding: 0.35rem;
-    font-size: 0.8rem;
-    color: var(--danger);
-    text-decoration: none;
+.vec-actions {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.5rem;
     border-top: 1px solid var(--border);
+    background: #f8fafc;
+}
+
+.vec-actions .btn {
+    flex: 1;
+    min-width: 0;
 }
 
 .vec-picker { border: 2px solid var(--border); border-radius: 12px; padding: 1rem; margin: 1rem 0; }
