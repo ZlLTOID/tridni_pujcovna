@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Upravit žáka — třída {{ zak.trida.nazev }}</h1>
+<form method="post" action="{{ path('app_zak_update', {id: zak.id}) }}" class="form form-narrow">
+    <label>Jméno
+        <input type="text" name="jmeno" value="{{ zak.jmeno }}" required autofocus>
+    </label>
+    <label>Příjmení
+        <input type="text" name="prijmeni" value="{{ zak.prijmeni }}" required>
+    </label>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Uložit změny</button>
+        <a href="{{ path('app_trida_detail', {id: zak.trida.id}) }}" class="btn btn-outline">Zpět</a>
+    </div>
+</form>
+{% endblock %}

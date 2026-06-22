@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Upravit věc — třída {{ vec.trida.nazev }}</h1>
+<form method="post" action="{{ path('app_vec_update', {id: vec.id}) }}" enctype="multipart/form-data" class="form form-narrow">
+    <label>Název věci
+        <input type="text" name="nazev" value="{{ vec.nazev }}" required autofocus>
+    </label>
+
+    {% if vec.foto %}
+    <p class="muted">Aktuální fotka:</p>
+    <img src="{{ vec.foto }}" alt="{{ vec.nazev }}" class="vec-photo" style="max-width:200px;margin-bottom:1rem">
+    {% endif %}
+
+    {% if not vec.zapujcena %}
+    <label>Nová fotka (volitelné)
+        <input type="file" name="foto" accept="image/*">
+    </label>
+    {% if vec.foto %}
+    <label class="checkbox-label">
+        <input type="checkbox" name="smazat_foto" value="1">
+        Odstranit stávající fotku
+    </label>
+    {% endif %}
+    {% else %}
+    <p class="muted">Věc je právě půjčená — lze upravit jen název.</p>
+    {% endif %}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Uložit změny</button>
+        <a href="{{ path('app_trida_detail', {id: vec.trida.id}) }}" class="btn btn-outline">Zpět</a>
+    </div>
+</form>
+{% endblock %}
