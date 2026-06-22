@@ -1,0 +1,44 @@
+CREATE TABLE IF NOT EXISTS ucitel (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    jmeno TEXT NOT NULL,
+    prijmeni TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'ucitel' CHECK (role IN ('ucitel', 'admin'))
+);
+
+CREATE TABLE IF NOT EXISTS trida (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nazev TEXT NOT NULL,
+    ucitel_id INTEGER NOT NULL,
+    FOREIGN KEY (ucitel_id) REFERENCES ucitel(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS zak (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    jmeno TEXT NOT NULL,
+    prijmeni TEXT NOT NULL,
+    trida_id INTEGER NOT NULL,
+    FOREIGN KEY (trida_id) REFERENCES trida(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS vec (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nazev TEXT NOT NULL,
+    foto TEXT,
+    zapujcena INTEGER NOT NULL DEFAULT 0,
+    trida_id INTEGER NOT NULL,
+    FOREIGN KEY (trida_id) REFERENCES trida(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS zapujceni (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    datum_zapujceni TEXT NOT NULL,
+    vec_id INTEGER NOT NULL,
+    zak_id INTEGER NOT NULL,
+    poznamka TEXT,
+    datum_vraceni TEXT,
+    aktivni INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (vec_id) REFERENCES vec(id) ON DELETE CASCADE,
+    FOREIGN KEY (zak_id) REFERENCES zak(id) ON DELETE CASCADE
+);

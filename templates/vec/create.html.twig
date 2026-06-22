@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Přidat věc do třídy {{ trida.nazev }}</h1>
+<form method="post" action="{{ path('app_vec_store', {tridaId: trida.id}) }}" enctype="multipart/form-data" class="form form-narrow">
+    <label>Název věci
+        <input type="text" name="nazev" required autofocus placeholder="Např. Modrý pravítko">
+    </label>
+    <label>Fotka (volitelné)
+        <input type="file" name="foto" accept="image/*">
+    </label>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Přidat věc</button>
+        <a href="{{ path('app_trida_detail', {id: trida.id}) }}" class="btn btn-outline">Zpět</a>
+    </div>
+</form>
+{% endblock %}

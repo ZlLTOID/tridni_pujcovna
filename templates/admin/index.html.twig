@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Administrace</h1>
+<p class="muted">Přehled všech učitelů, tříd a zapůjčení. Můžeš měnit hesla.</p>
+
+<section class="section">
+    <h2>Učitelé</h2>
+    <table class="table">
+        <thead>
+        <tr><th>Jméno</th><th>Přihlašovací jméno</th><th>Role</th><th>Tříd</th><th></th></tr>
+        </thead>
+        <tbody>
+        {% for u in ucitele %}
+        <tr>
+            <td>{{ u.celeJmeno }}</td>
+            <td><code>{{ u.username }}</code></td>
+            <td><span class="badge {{ u.jeAdmin ? 'badge-admin' : '' }}">{{ u.role }}</span></td>
+            <td>{{ u.pocetTrid }}</td>
+            <td class="actions">
+                <a href="{{ path('app_admin_password', {id: u.id}) }}">Změnit heslo</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="section">
+    <h2>Všechny třídy</h2>
+    <table class="table">
+        <thead>
+        <tr><th>Třída</th><th>Učitel</th><th>Žáci</th><th>Věci</th><th>Aktivní zapůjčení</th><th></th></tr>
+        </thead>
+        <tbody>
+        {% for t in tridy %}
+        <tr>
+            <td>{{ t.nazev }}</td>
+            <td>{{ t.ucitelCeleJmeno }}</td>
+            <td>{{ t.pocetZaku }}</td>
+            <td>{{ t.pocetVeci }}</td>
+            <td>{{ aktivniPoTridach[t.id] }}</td>
+            <td><a href="{{ path('app_trida_detail', {id: t.id}) }}">Detail</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<section class="section">
+    <h2>Poslední zapůjčení</h2>
+    <table class="table">
+        <thead>
+        <tr><th>Třída</th><th>Věc</th><th>Žák</th><th>Učitel</th><th>Zapůjčeno</th><th>Stav</th></tr>
+        </thead>
+        <tbody>
+        {% for zp in zapujceni %}
+        <tr>
+            <td>{{ zp.tridaNazev }}</td>
+            <td>{{ zp.vecNazev }}</td>
+            <td>{{ zp.zakCeleJmeno }}</td>
+            <td>{{ zp.ucitelCeleJmeno }}</td>
+            <td>{{ zp.datumZapujceni|date('d.m.Y H:i') }}</td>
+            <td>{{ zp.aktivni ? '🟢 aktivní' : '⚪ vráceno' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

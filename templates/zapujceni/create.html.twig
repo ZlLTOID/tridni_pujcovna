@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Zapůjčit věc — třída {{ trida.nazev }}</h1>
+
+{% if zaci is empty %}
+<div class="flash flash-error">Nejdřív přidej alespoň jednoho žáka do třídy.</div>
+<a href="{{ path('app_zak_create', {tridaId: trida.id}) }}" class="btn btn-primary">Přidat žáka</a>
+{% elseif veci is empty %}
+<div class="flash flash-error">Nejdřív přidej alespoň jednu věc do třídy.</div>
+<a href="{{ path('app_vec_create', {tridaId: trida.id}) }}" class="btn btn-primary">Přidat věc</a>
+{% else %}
+
+<form method="post" action="{{ path('app_zapujceni_store', {tridaId: trida.id}) }}" class="form">
+    <label>Datum zapůjčení
+        <input type="datetime-local" name="datum_zapujceni"
+               value="{{ 'now'|date('Y-m-d\\TH:i') }}" required>
+    </label>
+
+    <label>Žák
+        <select name="zak_id" required>
+            <option value="">— vyber žáka —</option>
+            {% for z in zaci %}
+            <option value="{{ z.id }}">{{ z.celeJmeno }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>Poznámka (volitelné)
+        <input type="text" name="poznamka" placeholder="Např. na domácí úkol">
+    </label>
+
+    <fieldset class="vec-picker">
+        <legend>Vyber věc k zapůjčení</legend>
+        <div class="vec-grid vec-grid-picker">
+            {% for v in veci %}
+            <label class="vec-pick {{ v.zapujcena ? 'vec-borrowed' : '' }}"
+                   {% if v.zapujcena %}title="{{ v.tooltipZapujceni }}"{% endif %}>
+                <input type="radio" name="vec_id" value="{{ v.id }}"
+                       {{ v.zapujcena ? 'disabled' : 'required' }}>
+                {% if v.foto %}
+                <img src="{{ v.foto }}" alt="" class="vec-photo-small">
+                {% else %}
+                <div class="vec-photo-small vec-photo-placeholder">📦</div>
+                {% endif %}
+                <span>{{ v.nazev }}</span>
+            </label>
+            {% endfor %}
+        </div>
+        <p class="hint">Šedé věci jsou právě půjčené — najetím myší uvidíš kdo je má.</p>
+    </fieldset>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Zapůjčit</button>
+        <a href="{{ path('app_trida_detail', {id: trida.id}) }}" class="btn btn-outline">Zpět</a>
+    </div>
+</form>
+{% endif %}
+{% endblock %}

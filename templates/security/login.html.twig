@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="auth-box">
+    <h1>Přihlášení</h1>
+    <p class="muted">Přihlas se pomocí uživatelského jména a hesla.</p>
+
+    {% if error %}
+    <div class="flash flash-error">Špatné přihlašovací jméno nebo heslo.</div>
+    {% endif %}
+
+    <form method="post" action="{{ path('app_login') }}" class="form">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <label>Přihlašovací jméno
+            <input type="text" name="_username" value="{{ last_username }}" required autofocus>
+        </label>
+        <label>Heslo
+            <input type="password" name="_password" required>
+        </label>
+        <button type="submit" class="btn btn-primary">Přihlásit se</button>
+    </form>
+    <p class="auth-link">Nemáš účet? <a href="{{ path('app_register') }}">Zaregistruj se jako učitel</a></p>
+</div>
+{% endblock %}

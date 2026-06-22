@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Třídní půjčovna{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-inner">
+            <a href="{{ path('app_dashboard') }}" class="logo">📚 Třídní půjčovna</a>
+            {% if app.user %}
+            <nav class="nav">
+                <a href="{{ path('app_dashboard') }}">Přehled</a>
+                {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_admin') }}">Administrace</a>
+                {% elseif is_granted('ROLE_UCITEL') %}
+                <a href="{{ path('app_trida_create') }}">Nová třída</a>
+                {% endif %}
+                <span class="user-badge">{{ app.user.celeJmeno }}</span>
+                <a href="{{ path('app_logout') }}" class="btn btn-small btn-outline">Odhlásit</a>
+            </nav>
+            {% endif %}
+        </div>
+    </header>
+    <main class="container main">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+            <div class="flash flash-{{ label }}">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+        {% block body %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <div class="container">Třídní půjčovna — ukázková Symfony aplikace pro 3. třídu</div>
+    </footer>
+</body>
+</html>

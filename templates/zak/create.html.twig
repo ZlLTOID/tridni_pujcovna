@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Přidat žáka do třídy {{ trida.nazev }}</h1>
+<form method="post" action="{{ path('app_zak_store', {tridaId: trida.id}) }}" class="form form-narrow">
+    <label>Jméno
+        <input type="text" name="jmeno" required autofocus>
+    </label>
+    <label>Příjmení
+        <input type="text" name="prijmeni" required>
+    </label>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Přidat žáka</button>
+        <a href="{{ path('app_trida_detail', {id: trida.id}) }}" class="btn btn-outline">Zpět</a>
+    </div>
+</form>
+{% endblock %}

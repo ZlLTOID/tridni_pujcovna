@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Moje třídy</h1>
+
+{% if is_granted('ROLE_UCITEL') %}
+<p class="muted">Vytvoř třídu, přidej žáky a věci a eviduj zapůjčení.</p>
+<a href="{{ path('app_trida_create') }}" class="btn btn-primary">+ Nová třída</a>
+{% elseif is_granted('ROLE_ADMIN') %}
+<p class="muted">Jako administrátor vidíš všechny třídy. Správu provádějí učitelé.</p>
+{% endif %}
+
+{% if tridy is empty %}
+<div class="empty-state">
+    <p>Zatím tu není žádná třída.</p>
+    {% if is_granted('ROLE_UCITEL') %}
+    <a href="{{ path('app_trida_create') }}" class="btn btn-primary">Vytvoř první třídu</a>
+    {% endif %}
+</div>
+{% else %}
+<div class="card-grid">
+    {% for t in tridy %}
+    <a href="{{ path('app_trida_detail', {id: t.id}) }}" class="card card-link">
+        <h2>{{ t.nazev }}</h2>
+        {% if is_granted('ROLE_ADMIN') %}
+        <p class="muted">Učitel: {{ t.ucitelCeleJmeno }}</p>
+        {% endif %}
+        <div class="stats">
+            <span>👦 {{ t.pocetZaku }} žáků</span>
+            <span>📦 {{ t.pocetVeci }} věcí</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

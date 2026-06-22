@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1>{{ trida.nazev }}</h1>
+        <p class="muted">Správa žáků, věcí a zapůjčení</p>
+    </div>
+    <div class="header-actions">
+        <a href="{{ path('app_zak_create', {tridaId: trida.id}) }}" class="btn btn-small">+ Žák</a>
+        <a href="{{ path('app_vec_create', {tridaId: trida.id}) }}" class="btn btn-small">+ Věc</a>
+        <a href="{{ path('app_zapujceni_create', {tridaId: trida.id}) }}" class="btn btn-small btn-primary">Zapůjčit</a>
+        {% if is_granted('ROLE_UCITEL') %}
+        <a href="{{ path('app_trida_delete', {id: trida.id}) }}"
+           class="btn btn-small btn-danger"
+           onclick="return confirm('Opravdu smazat celou třídu včetně žáků a věcí?')">Smazat třídu</a>
+        {% endif %}
+    </div>
+</div>
+
+<section class="section">
+    <h2>Žáci</h2>
+    {% if zaci is empty %}
+    <p class="muted">Zatím žádní žáci. <a href="{{ path('app_zak_create', {tridaId: trida.id}) }}">Přidej prvního</a></p>
+    {% else %}
+    <table class="table">
+        <thead><tr><th>Jméno</th><th>Příjmení</th><th></th></tr></thead>
+        <tbody>
+        {% for z in zaci %}
+        <tr>
+            <td>{{ z.jmeno }}</td>
+            <td>{{ z.prijmeni }}</td>
+            <td class="actions">
+                <a href="{{ path('app_zak_delete', {id: z.id}) }}"
+                   onclick="return confirm('Smazat žáka?')">Smazat</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</section>
+
+<section class="section">
+    <h2>Věci</h2>
+    {% if veci is empty %}
+    <p class="muted">Zatím žádné věci. <a href="{{ path('app_vec_create', {tridaId: trida.id}) }}">Přidej první</a></p>
+    {% else %}
+    <div class="vec-grid">
+        {% for v in veci %}
+        <div class="vec-card {{ v.zapujcena ? 'vec-borrowed' : '' }}"
+             {% if v.zapujcena %}title="{{ v.tooltipZapujceni }}"{% endif %}>
+            {% if v.foto %}
+            <img src="{{ v.foto }}" alt="{{ v.nazev }}" class="vec-photo">
+            {% else %}
+            <div class="vec-photo vec-photo-placeholder">📦</div>
+            {% endif %}
+            <div class="vec-info">
+                <strong>{{ v.nazev }}</strong>
+                <span class="badge {{ v.zapujcena ? 'badge-warn' : 'badge-ok' }}">
+                    {{ v.zapujcena ? 'Půjčeno' : 'Volné' }}
+                </span>
+            </div>
+            {% if not v.zapujcena %}
+            <a href="{{ path('app_vec_delete', {id: v.id}) }}"
+               class="vec-delete"
+               onclick="return confirm('Smazat věc?')">Smazat</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+
+<section class="section">
+    <h2>Historie zapůjčení</h2>
+    {% if zapujceni is empty %}
+    <p class="muted">Zatím žádné zapůjčení.</p>
+    {% else %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Věc</th>
+            <th>Žák</th>
+            <th>Zapůjčeno</th>
+            <th>Vráceno</th>
+            <th>Poznámka</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for zp in zapujceni %}
+        <tr class="{{ zp.aktivni ? 'row-active' : '' }}">
+            <td>{{ zp.vecNazev }}</td>
+            <td>{{ zp.zakCeleJmeno }}</td>
+            <td>{{ zp.datumZapujceni|date('d.m.Y H:i') }}</td>
+            <td>{{ zp.datumVraceni ? zp.datumVraceni|date('d.m.Y H:i') : '—' }}</td>
+            <td>{{ zp.poznamka ?: '—' }}</td>
+            <td class="actions">
+                {% if zp.aktivni %}
+                <a href="{{ path('app_zapujceni_return', {id: zp.id}) }}"
+                   class="btn btn-small btn-primary"
+                   onclick="return confirm('Označit jako vrácené?')">Vrátit</a>
+                {% else %}
+                <span class="muted">Ukončeno</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</section>
+
+<p><a href="{{ path('app_dashboard') }}">← Zpět na přehled</a></p>
+{% endblock %}

@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pujcovna
+      MYSQL_USER: pujcovna
+      MYSQL_PASSWORD: pujcovna
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    build: .
+    ports:
+      - "8090:80"
+    environment:
+      APP_ENV: dev
+      APP_DEBUG: 1
+      APP_SECRET: pujcovna_docker_secret
+      DATABASE_URL: mysql://pujcovna:pujcovna@mysql:3306/pujcovna?serverVersion=8.4&charset=utf8mb4
+    volumes:
+      # Celý projekt — změny v src, templates, config, public hned viditelné
+      - .:/var/www/html:cached
+      # vendor a var z image/volumes — nepřepíše je prázdná složka z hostitele
+      - app_vendor:/var/www/html/vendor
+      - app_var:/var/www/html/var
+      # PHP: sledovat změny souborů bez restartu
+      - ./docker/php/dev.ini:/usr/local/etc/php/conf.d/99-dev.ini:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  app_vendor:
+  app_var:

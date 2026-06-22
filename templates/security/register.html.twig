@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="auth-box">
+    <h1>Registrace učitele</h1>
+    <p class="muted">Po registraci můžeš vytvářet třídy a spravovat zapůjčení.</p>
+    <form method="post" class="form">
+        <label>Jméno
+            <input type="text" name="jmeno" required>
+        </label>
+        <label>Příjmení
+            <input type="text" name="prijmeni" required>
+        </label>
+        <label>Přihlašovací jméno
+            <input type="text" name="username" required>
+        </label>
+        <label>Heslo
+            <input type="password" name="password" required minlength="4">
+        </label>
+        <label>Heslo znovu
+            <input type="password" name="password_confirm" required minlength="4">
+        </label>
+        <button type="submit" class="btn btn-primary">Zaregistrovat se</button>
+    </form>
+    <p class="auth-link">Už máš účet? <a href="{{ path('app_login') }}">Přihlas se</a></p>
+</div>
+{% endblock %}

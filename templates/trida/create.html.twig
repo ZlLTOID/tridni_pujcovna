@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Nová třída</h1>
+<form method="post" action="{{ path('app_trida_store') }}" class="form form-narrow">
+    <label>Název třídy (např. 3.A)
+        <input type="text" name="nazev" required placeholder="3.A" autofocus>
+    </label>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Vytvořit třídu</button>
+        <a href="{{ path('app_dashboard') }}" class="btn btn-outline">Zpět</a>
+    </div>
+</form>
+{% endblock %}
