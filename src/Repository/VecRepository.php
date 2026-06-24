@@ -22,6 +22,7 @@ class VecRepository extends ServiceEntityRepository
             SELECT v.*
             FROM vec v
             WHERE v.id = :id
+              AND v.datum_smazani IS NULL
             SQL;
 
         /** @var Vec|null */
@@ -35,6 +36,7 @@ class VecRepository extends ServiceEntityRepository
             SELECT v.*
             FROM vec v
             WHERE v.trida_id = :tridaId
+              AND v.datum_smazani IS NULL
             ORDER BY v.nazev ASC
             SQL;
 
@@ -49,6 +51,7 @@ class VecRepository extends ServiceEntityRepository
             SELECT v.*
             FROM vec v
             WHERE v.trida_id = :tridaId
+              AND v.datum_smazani IS NULL
             ORDER BY v.zapujcena ASC, v.nazev ASC
             SQL;
 

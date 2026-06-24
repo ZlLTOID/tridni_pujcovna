@@ -85,7 +85,7 @@ class Trida
 
     public function getPocetVeci(): int
     {
-        return $this->veci->count();
+        return $this->veci->filter(fn (Vec $vec) => !$vec->isSmazano())->count();
     }
 
     public function ucitelCeleJmeno(): string

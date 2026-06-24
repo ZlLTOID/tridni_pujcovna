@@ -57,7 +57,7 @@ class ZapujceniController extends AbstractController
         $vec = $this->vecRepository->findById($vecId);
         $zak = $this->zakRepository->findById($zakId);
 
-        if (!$vec || $vec->getTrida()->getId() !== $tridaId || $vec->jeZapujcena()) {
+        if (!$vec || $vec->getTrida()->getId() !== $tridaId || $vec->jeZapujcena() || $vec->isSmazano()) {
             $this->addFlash('error', 'Tuto věc nelze zapůjčit — je už půjčená nebo neexistuje.');
 
             return $this->redirectToRoute('app_zapujceni_create', ['tridaId' => $tridaId]);

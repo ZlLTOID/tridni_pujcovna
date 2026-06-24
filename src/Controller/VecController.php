@@ -168,15 +168,8 @@ class VecController extends AbstractController
             return $this->redirectToRoute('app_trida_detail', ['id' => $trida->getId()]);
         }
 
-        if ($vec->getFoto()) {
-            $path = $this->projectDir . '/public' . $vec->getFoto();
-            if (file_exists($path)) {
-                unlink($path);
-            }
-        }
-
         $tridaId = $trida->getId();
-        $this->em->remove($vec);
+        $vec->smazat();
         $this->em->flush();
 
         $this->addFlash('success', 'Věc byla smazána.');

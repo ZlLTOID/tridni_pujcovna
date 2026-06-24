@@ -25,6 +25,9 @@ class Vec
     #[ORM\Column]
     private bool $zapujcena = false;
 
+    #[ORM\Column(name: 'datum_smazani', nullable: true)]
+    private ?\DateTimeImmutable $datumSmazani = null;
+
     #[ORM\ManyToOne(targetEntity: Trida::class, inversedBy: 'veci')]
     #[ORM\JoinColumn(name: 'trida_id', nullable: false)]
     private Trida $trida;
@@ -82,6 +85,21 @@ class Vec
         $this->zapujcena = $zapujcena;
 
         return $this;
+    }
+
+    public function getDatumSmazani(): ?\DateTimeImmutable
+    {
+        return $this->datumSmazani;
+    }
+
+    public function isSmazano(): bool
+    {
+        return $this->datumSmazani !== null;
+    }
+
+    public function smazat(): void
+    {
+        $this->datumSmazani = new \DateTimeImmutable();
     }
 
     public function getTrida(): Trida
